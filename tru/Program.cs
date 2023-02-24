@@ -11,8 +11,10 @@
 
             1)Обычный 
             2)Прямоугольный
-            3) Равнобедренный
+            3)Равнобедренный
          */
+
+        static decimal a = 0, b = 0, c = 0, r = 0, t = 1;
 
         static void Print(object a)
         {
@@ -33,7 +35,7 @@
               Если хотя бы в одном случае сторона окажется больше или равна сумме двух других,
               то треугольника с такими сторонами не существует.*/
 
-            return ((a + b) > c | (a + c) > b | (c + b) > a);   
+            return ((a + b) > c & (a + c) > b & (c + b) > a);   
         }
 
         public static bool PythagorasIsSleeping(decimal a, decimal b, decimal c)
@@ -42,6 +44,7 @@
                 (Math.Pow((double)b, 2) == (Math.Pow((double)a,2)+Math.Pow((double)c,2)) ? true : 
                 Math.Pow((double)c, 2) == (Math.Pow((double)b, 2) + Math.Pow((double)a, 2)) ? true : false);
         }
+        public static bool IsIsosceles(decimal a, decimal b, decimal c) => a == b ? true : (a == c ? true : (b == c ? true : false));
 
         public static Random uuu;
 
@@ -50,10 +53,12 @@
             uuu = new Random();
             int countEx = 100;
             int countTr = 2_000_000;
-            int maxTrSize = 100;
+            int maxTrSize = 10;
 
-            decimal a = 0, b = 0, c = 0, r = 0, t = 1;
+            
             List<decimal> o = new List<decimal>();
+            double countPythagoras = 0.0f;
+            double countIsos = 0.0f;
 
             //for (int i = 0; i < 2000; i++)
             //{
@@ -67,16 +72,20 @@
             {
                 for (int i = 0; i < countTr; i++)
                 {
-                    if (Work(a, b, c, maxTrSize)) r++;
+                    bool temp = Work(a, b, c, maxTrSize);
+                    if (temp) r++;
+                    if (PythagorasIsSleeping(a, b, c)) countPythagoras += 0.0001f;
+                    if (IsIsosceles(a, b, c)) countIsos += 0.0001f;
                 }
                 o.Add(r / countTr);
                 Console.WriteLine($"{j}\t" + $"{o[j]:f10}");
                 r *= 0;
             }
 
-            Console.WriteLine($"\n\n\n\n\nпри заданных параметрах:\n\tкол-во треугольников в испытании:\t{countTr}\n\tкол-во испытаний: \t{countEx}\nmin вероятность существования треугольника:\t{o.Where(x => x > 0).Min()}\t ");
+            Print($"\n\n\n\n\nпри заданных параметрах:\n\tкол-во треугольников в испытании:\t{countTr}\n\tкол-во испытаний: \t{countEx}\nmin вероятность существования треугольника:\t{o.Where(x => x > 0).Min()}\t ");
+            Print($"\n\t\tиз них прямоугольных:\t{countPythagoras*10000:f0};\n\t\tравнобедренных:\t{countIsos*10000:f0};\n\t\tобычных:\t~ {countEx*countTr*o.First():f0}.");
 
-
+            //Console.WriteLine(PythagorasIsSleeping(decimal.Parse(Console.ReadLine()), decimal.Parse(Console.ReadLine()), decimal.Parse(Console.ReadLine())).ToString());
         }
     }
 }
